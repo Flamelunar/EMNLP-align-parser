@@ -1,0 +1,31 @@
+【run.sh】
+cudaN=1 des="conll-bucketing-pad"
+exe="python ./srcbase/main.py --exp-des $des --device cuda:$cudaN --config_file config.txt"
+$exe --is_dictionary_exist 0 --is_train 1 --is_test 0 > log.create-dict 2>&1  
+#$exe --is_dictionary_exist 1 --random_seed 1540422239 --is_train 1 --is_test 0 > log.train 2>&1  
+
+num=`ls -d models-* | egrep -o '[0-9]+'`
+echo $num
+#$exe --is_train 0 --is_test 1 --model_eval_num $num > log.test-$num 2>&1 
+
+#CUDA_VISIBLE_DEVICES=$cudaN $exe --is_train 0 --is_test 1 --model_eval_num $num #> log.test-$num 2>&1
+
+
+1. 先创建字典 $exe --is_dictionary_exist 0 --is_train 1 --is_test 0 > log.create-dict 2>&1  
+注释掉其余两个$exe
+[注意]必须删除已有的dict目录文件
+终端进入文件输入nohup ./run.sh & 
+后台查看输出的日志 tail -f log.create-dict
+
+2. 模型训练 $exe --is_dictionary_exist 1 --random_seed 1540422239 --is_train 1 --is_test 0 > log.train 2>&1
+注释掉其余两个$exe
+终端进入文件输入nohup ./run.sh & 
+后台查看输出的日志 tail -f log.train
+
+3. 模型预测$exe --is_train 0 --is_test 1 --model_eval_num $num > log.test-$num 2>&1 
+
+注释掉其余两个$exe
+终端进入文件输入nohup ./run.sh & 
+后台查看输出的日志 tail -f  log.test 同时目录下会生成预测的文件
+
+主要核心代码是 python ./srcbase/main.py 【main中主要的是parser.py代码】
